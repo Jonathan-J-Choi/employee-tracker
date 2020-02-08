@@ -22,10 +22,6 @@ CREATE TABLE employee (
   first_name VARCHAR(30) NOT NULL,
   last_name VARCHAR(30) NOT NULL,
   role_id INT NOT NULL,
-  manager_id INT NOT NULL,
+  manager_id INT DEFAULT 0,
   PRIMARY KEY (id)
 );
-
-SELECT * FROM department;
-select * from role;
-select * from employee;
