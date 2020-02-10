@@ -17,21 +17,16 @@ var connection = mysql.createConnection({
   database: "employee_trackerDB"
 });
 
+// Connection to MySQL
 connection.connect(function(err) {
   if (err) throw err;
   console.log("connected as id " + connection.threadId);
   start()
 });
 
-// function afterConnection() {
-//   connection.query("SELECT * FROM department", function(err, res) {
-//     if (err) throw err;
-//     console.log(res);
-//     connection.end();
-//   });
-// }
-
+// ================================================================//
 // function which prompts the user for what action they should take
+// ================================================================//
 function start() {
   inquirer
     .prompt({
@@ -56,14 +51,16 @@ function start() {
     });
 }
 
+// ==================================================================================//
 // Function which prompts user for Adding Departments, Adding Roles, and Adding Roles
+// ==================================================================================//
 function addDRE() {
   inquirer
     .prompt({
       name: "addOptions",
       type: "list",
       message: "Would you like to [Add Department], [Add Role], or [Add Employee]?",
-      choices: ["Add Department", "Add Role", "Add Employee", "EXIT"]
+      choices: ["Add Department", "Add Role", "Add Employee", "BACK", "EXIT"]
     })
     .then(function(answer) {
       // based on their answer, call the bid or the post functions
@@ -75,13 +72,133 @@ function addDRE() {
       }
       else if(answer.addOptions === "Add Employee"){
         addE();
+        // Loop back for original options
+      }else if(answer.addOptions === "BACK"){
+        start();
       } else{
+        // End Prompt
         connection.end();
       }
     });
 }
 
+// function to handle posting new departments
+function addD() {
+  // prompt for info about the department being added
+  inquirer
+    .prompt([
+      {
+        name: "name",
+        type: "input",
+        message: "What is the name of the department you would like to add?"
+      }
+    ])
+    .then(function(answer) {
+      // when finished prompting, insert a new item into the db with that info
+      connection.query(
+        "INSERT INTO department SET ?",
+        {
+          name: answer.name,
+        },
+        function(err) {
+          if (err) throw err;
+          console.log("Department has been added successfully.");
+          // re-prompt the user for if they want add any other departments, roles, or employees
+          addDRE();
+        }
+      );
+    });
+}
+
+// function to handle posting new roles
+function addR() {
+  // prompt for info about the department being added
+  inquirer
+    .prompt([
+      {
+        name: "title",
+        type: "input",
+        message: "What is the title of the role you would like to add?"
+      },
+      {
+        name: "salary",
+        type: "number",
+        message: "What is the salary of the role you would like to add?"
+      },
+      {
+        name: "departmentID",
+        type: "number",
+        message: "What is the departmentID of the role you would like to add?"
+      }
+    ])
+    .then(function(answer) {
+      // when finished prompting, insert a new item into the db with that info
+      connection.query(
+        "INSERT INTO role SET ?",
+        {
+          title: answer.title,
+          salary: answer.salary,
+          department_id: answer.departmentID,
+        },
+        function(err) {
+          if (err) throw err;
+          console.log("Role has been added successfully.");
+          // re-prompt the user for if they want add any other departments, roles, or employees
+          addDRE();
+        }
+      );
+    });
+}
+
+// function to handle posting new employees
+function addE() {
+  // prompt for info about the employee being added
+  inquirer
+    .prompt([
+      {
+        name: "firstName",
+        type: "input",
+        message: "What is the first name of the employee you would like to add?"
+      },
+      {
+        name: "lastName",
+        type: "input",
+        message: "What is the last name of the employee you would like to add?"
+      },
+      {
+        name: "roleID",
+        type: "number",
+        message: "What is role ID number of the employee you would like to add?"
+      },
+      {
+        name: "managerID",
+        type: "number",
+        message: "Is this employee a Manager? Enter 0 for [NO] or 1 for [YES]"
+      }
+    ])
+    .then(function(answer) {
+      // when finished prompting, insert a new item into the db with that info
+      connection.query(
+        "INSERT INTO department SET ?",
+        {
+          first_name: answer.firstName,
+          last_name: answer.lastName,
+          role_id: answer.roleID,
+          manager_id: answer.managerID,
+        },
+        function(err) {
+          if (err) throw err;
+          console.log("Department has been added successfully.");
+          // re-prompt the user for if they want add any other departments, roles, or employees
+          addDRE();
+        }
+      );
+    });
+}
+
+// ============================================================================//
 // Function for prompting user for displaying Departments, Roles, and Employees
+// ============================================================================//
 function viewDRE() {
   inquirer
     .prompt({
@@ -106,7 +223,9 @@ function viewDRE() {
     });
 }
 
+// =============================================//
 // Function for prompting user for updating Role
+// =============================================//
 function updateR() {
   inquirer
     .prompt({
