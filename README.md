@@ -5,9 +5,9 @@ Departments, roles, and employees are creatable and viewable within the applicat
 Roles are also able to be revised and edited.
 Manager column is also available to denote which employees are managers.
 
-#H2 Technologies Used
-⋅⋅* Inquirer
-⋅⋅* mySQL
-⋅⋅* dotENV
-⋅⋅* console.table
+##H2 Technologies Used
+* Inquirer
+* mySQL
+* dotENV
+* console.table
 
