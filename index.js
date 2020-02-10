@@ -179,7 +179,7 @@ function addE() {
     .then(function(answer) {
       // when finished prompting, insert a new item into the db with that info
       connection.query(
-        "INSERT INTO department SET ?",
+        "INSERT INTO employee SET ?",
         {
           first_name: answer.firstName,
           last_name: answer.lastName,
@@ -188,7 +188,7 @@ function addE() {
         },
         function(err) {
           if (err) throw err;
-          console.log("Department has been added successfully.");
+          console.log("Employee has been added successfully.");
           // re-prompt the user for if they want add any other departments, roles, or employees
           addDRE();
         }
@@ -204,23 +204,52 @@ function viewDRE() {
     .prompt({
       name: "viewOptions",
       type: "list",
-      message: "Would you like to [View Department], [View Role], or [View Employee]?",
-      choices: ["View Department", "View Role", "View Employee", "EXIT"]
+      message: "Would you like to [View Departments], [View Roles], or [View Employees]?",
+      choices: ["View Department", "View Role", "View Employee", "BACK", "EXIT"]
     })
     .then(function(answer) {
       // based on their answer, call the various view functions
-      if (answer.viewOptions === "View Department") {
+      if (answer.viewOptions === "View Departments") {
         viewD();
       }
-      else if(answer.viewOptions === "View Role") {
+      else if(answer.viewOptions === "View Roles") {
         viewR();
       }
-      else if(answer.viewOptions === "View Employee"){
+      else if(answer.viewOptions === "View Employees"){
         viewE();
+        // Loop back for original options
+      }else if(answer.addOptions === "BACK"){
+        start();
       } else{
+        // End Prompt
         connection.end();
       }
     });
+}
+
+function viewD() {
+  // query the database for all departments
+  connection.query("SELECT * FROM department", function(err, results) {
+    if (err) throw err;
+    console.log(results);
+    viewDRE();
+  })
+}
+function viewR() {
+  // query the database for all roles
+  connection.query("SELECT * FROM role", function(err, results) {
+    if (err) throw err;
+    console.log(results);
+    viewDRE();
+  })
+}
+function viewE() {
+  // query the database for all employees
+  connection.query("SELECT * FROM employee", function(err, results) {
+    if (err) throw err;
+    console.log(results);
+    viewDRE();
+  })
 }
 
 // =============================================//
