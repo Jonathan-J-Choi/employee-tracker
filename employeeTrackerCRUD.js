@@ -261,14 +261,78 @@ function updateR() {
       name: "updateOptions",
       type: "list",
       message: "Would you like to [Update Role]?",
-      choices: ["Update Role", "EXIT"]
+      choices: ["Update Role","BACK", "EXIT"]
     })
     .then(function(answer) {
       // based on their answer, call the various view functions
       if (answer.updateOptions === "Update Role") {
         upR();
-      }else{
+      }else if(answer.updateOptions === "BACK"){
+        start();
+      } else{
+        // End Prompt
         connection.end();
       }
     });
+}
+
+function upR() {
+  // query the database for all roles
+  connection.query("SELECT * FROM role", function(err, results) {
+    if (err) throw err;
+    // once you have the roles, prompt the user for which they'd like to update
+    inquirer
+      .prompt([
+        {
+          name: "choice",
+          type: "rawlist",
+          choices: function() {
+            var choiceArray = [];
+            for (var i = 0; i < results.length; i++) {
+              choiceArray.push(results[i].title);
+            }
+            return choiceArray;
+          },
+          message: "What role would you like to update?"
+        },
+        {
+          name: "salary",
+          type: "number",
+          message: "What is the new salary for this role?"
+        },
+        {
+          name: "departmentID",
+          type: "number",
+          message: "What is the new department ID for this role?"
+        }
+      ])
+      .then(function(answer) {
+        // get the information of the chosen role
+        var chosenRole;
+        for (var i = 0; i < results.length; i++) {
+          if (results[i].title === answer.choice) {
+            chosenRole = results[i];
+          }
+        }
+          connection.query(
+            "UPDATE role SET ? WHERE ?",
+            [
+              {
+                salary: answer.salary
+              },
+              {
+                department_id: answer.departmentID
+              },
+              {
+                id: chosenRole.id
+              }
+            ],
+            function(error) {
+              if (error) throw err;
+              console.log("Role successfully updated.");
+              start();
+            }
+          );
+      });
+  });
 }
