@@ -11,3 +11,7 @@ Application utilizes dotENV to keep your password safe.
 * mySQL
 * dotENV
 * console.table
+
+## Demo
+
+![](assets/employee_tracker.gif)
