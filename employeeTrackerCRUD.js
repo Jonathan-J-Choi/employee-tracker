@@ -205,7 +205,7 @@ function viewDRE() {
       name: "viewOptions",
       type: "list",
       message: "Would you like to [View Departments], [View Roles], or [View Employees]?",
-      choices: ["View Department", "View Role", "View Employee", "BACK", "EXIT"]
+      choices: ["View Departments", "View Roles", "View Employees", "BACK", "EXIT"]
     })
     .then(function(answer) {
       // based on their answer, call the various view functions
@@ -218,7 +218,7 @@ function viewDRE() {
       else if(answer.viewOptions === "View Employees"){
         viewE();
         // Loop back for original options
-      }else if(answer.addOptions === "BACK"){
+      }else if(answer.viewOptions === "BACK"){
         start();
       } else{
         // End Prompt
@@ -231,7 +231,7 @@ function viewD() {
   // query the database for all departments
   connection.query("SELECT * FROM department", function(err, results) {
     if (err) throw err;
-    console.log(results);
+    console.table(results);
     viewDRE();
   })
 }
@@ -239,7 +239,7 @@ function viewR() {
   // query the database for all roles
   connection.query("SELECT * FROM role", function(err, results) {
     if (err) throw err;
-    console.log(results);
+    console.table(results);
     viewDRE();
   })
 }
@@ -247,7 +247,7 @@ function viewE() {
   // query the database for all employees
   connection.query("SELECT * FROM employee", function(err, results) {
     if (err) throw err;
-    console.log(results);
+    console.table(results);
     viewDRE();
   })
 }
